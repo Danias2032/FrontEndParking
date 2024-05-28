@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parkering</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        header {
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #343a40;
+        }
+
+        .parking-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-gap: 10px;
+        }
+
+        .parking-spot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            height: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .parking-spot.available {
+            background-color: lightgreen;
+        }
+
+        .parking-spot.occupied {
+            background-color: lightcoral;
+        }
+
+        .parking-spot.handicap {
+            border: 2px dashed #000;
+        }
+
+        footer .btn {
+            margin: 10px;
+        }
+
+        footer {
+            margin-top: 40px;
+        }
+
+        .search-input {
+            margin-bottom: 20px;
+        }
+
+        .info {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center my-5">
+            <h1>Tilgængelige Parkeringspladser</h1>
+        </header>
+        <div class="info">
+            <p>Dato: <span id="date"></span></p>
+            <p>Dag: <span id="day"></span></p>
+            <p>Tid: <span id="time"></span></p>
+            <p>Temperatur: <span id="temperature"></span>&#8451;</p>
+        </div>
+        <main>
+            <div class="row">
+                <div class="col-12">
+                    <input type="text" class="form-control search-input" placeholder="Maglegaardsvej 2, 4000 Roskilde">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="parking-grid">
+                        <!-- Parkeringspladser i et kort -->
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="text-center">
+            <button class="btn btn-primary show-all">Se alle parkeringspladser</button>
+            <button class="btn btn-secondary show-handicap">Se kun handicappladser</button>
+        </footer>
+    </div>
+
+    <script>
+        // JavaScript til at generere parkeringspladser automatisk og tilfældigt farve dem
+        const grid = document.querySelector('.parking-grid');
+        const allParkingSpots = document.querySelectorAll('.parking-spot:not(.handicap)');
+
+        // Generer oplysninger om dato, dag, tid og temperatur
+        const now = new Date();
+        const dateElement = document.getElementById('date');
+        const dayElement = document.getElementById('day');
+        const timeElement = document.getElementById('time');
+        const temperatureElement = document.getElementById('temperature');
+        const daysOfWeek = ['Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'];
+        const randomTemperature = Math.floor(Math.random() * (25 - 10 + 1)) + 10; // Tilfældigt mellem 10 og 25 grader
+
+        dateElement.textContent = now.toLocaleDateString('da-DK');
+        dayElement.textContent = daysOfWeek[now.getDay()];
+        timeElement.textContent = now.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' });
+        temperatureElement.textContent = randomTemperature;
+
+        // Tilføj handicappladser først med tilfældig farvning
+        for (let i = 1; i <= 4; i++) {
+            const div = document.createElement('div');
+            div.className = 'parking-spot handicap';
+            div.textContent = `H${i}`;
+            // Tilfældig farvning af handicappladser
+            if (Math.random() > 0.5) {
+                div.classList.add('available'); // Grøn for tilgængelig
+            } else {
+                div.classList.add('occupied'); // Rød for optaget
+            }
+            grid.appendChild(div);
+        }
+
+        // Tilføj de øvrige parkeringspladser med tilfældig farvning
+        for (let i = 1; i <= 80; i++) {
+            const div = document.createElement('div');
+            div.className = 'parking-spot';
+            div.textContent = `P${i}`;
+            // Tilfældig farvning af parkeringspladser på kortet
+            if (Math.random() > 0.5) {
+                div.classList.add('available'); // Grøn for tilgængelig
+            } else {
+                div.classList.add('occupied'); // Rød for optaget
+            }
+            grid.appendChild(div);
+        }
+
+        // Lyt på klikhændelser for knapperne
+        const showAllButton = document.querySelector('.show-all');
+        const showHandicapButton = document.querySelector('.show-handicap');
+
+        showAllButton.addEventListener('click', function() {
+            allParkingSpots.forEach(parkingSpot => {
+                parkingSpot.style.display = 'flex';
+            });
+        });
+
+        showHandicapButton.addEventListener('click', function() {
+            allParkingSpots.forEach(parkingSpot => {
+                if (parkingSpot.classList.contains('handicap')) {
+                    parkingSpot.style.display = 'flex';
+                } else {
+                    parkingSpot.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
